@@ -39,10 +39,7 @@ def signin(request):
     else:
         request.session.set_expiry(60 * 60 * 24 * 60)
 
-    next = request.GET.get('next', '')
-    if next == '':
-        next = '/'
-    return HttpResponseRedirect(next)
+    return JsonResponse({"success": True, "id": user.id})
 
 def profile(request):
     if request.user.is_authenticated():

@@ -7,7 +7,7 @@ from users.models import User
 class Problem(models.Model):
     title = models.CharField(max_length=255, unique=True)
     user = models.ForeignKey(User)
-    problem_image = models.ImageField(blank=True, upload_to='static/images/problems')
+    problem_image = models.ImageField(blank=True, upload_to='images/problems')
     description = models.TextField(blank=True)
     up = models.IntegerField(default=0)
     tags = models.ManyToManyField(Tag, blank=True)

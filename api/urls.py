@@ -8,5 +8,6 @@ urlpatterns = patterns(
     url(r'^myproblems/$', 'views.problems_with_user'),
     url(r'^user/(\d+)/$', 'views.user'),
     url(r'^problem/(\d+)/$', 'views.problem'),
-    url(r'^comments/(\d+)/$', 'views.comments_with_problem')
+    url(r'^comments/(\d+)/$', 'views.comments_with_problem'),
+    url(r'^signin', 'views.signin')
 )
