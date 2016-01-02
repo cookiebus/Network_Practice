@@ -2,27 +2,67 @@ from django.shortcuts import render, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from problems.models import Problem
 from comments.models import Comment
+from django.views.decorators.csrf import csrf_exempt
 import json
 
-
+@csrf_exempt
 def JsonResponse(params):
     return HttpResponse(json.dumps(params))
 
-def signin(request):
-    next = request.GET.get('next', '')
+@csrf_exempt
+def post_problem(request):
+    return JsonResponse({"success": True, "id": 6})
 
+@csrf_exempt
+def signup(request):
+    if request.method != "POST":
+        return JsonResponse({"success": False, "error": "Please send a post."})
+
+    if 'username' not in request.POST or len(request.POST.get('username'))==0:
+        return JsonResponse({"success": False, "error": "Please fill username."})
+    else:
+        username = request.POST.get('username')
+
+    if 'email' not in request.POST or len(request.POST.get('email'))==0:
+        return JsonResponse({"success": False, "error": "Please fill email."})
+    else:
+        email = request.POST.get('email')
+
+    if 'password'  not in request.POST or len(request.POST.get('password'))==0:
+        return JsonResponse({"success": False, "error": "Please fill password."})
+    else:
+        password = request.POST.get('password')
+    
+    if User.objects.filter(username__iexact=username).exists():
+    	return JsonResponse({"success": False, "error": "This username exists."})
+    
+    if User.objects.filter(email=email).exists():
+        return JsonResponse({"success": False, "error": "This username exists."})
+    
+    user = User.objects.create(username=username, email=email)    
+    user.set_password(password)
+    user.save()
+
+    user = authenticate(username=username, password=password)
+    django_login(request, user)
+    
+    return JsonResponse({"success": True, "id": user.id})
+
+
+@csrf_exempt
+def signin(request):
     if request.method != 'POST':
         return JsonResponse({"success": False, "error": "Please send a post."})
 
-    if 'username_or_email'  not in request.GET:
+    if 'username_or_email'  not in request.POST:
         return JsonResponse({"success": False, "error": "Please fill username or email."})
     else:
-        username_or_email = request.GET.get('username_or_email')
+        username_or_email = request.POST.get('username_or_email')
 
-    if 'password'  not in request.GET:
+    if 'password'  not in request.POST:
         return JsonResponse({"success": False, "error": "Please fill password."})
     else:
-        password = request.GET.get('password')
+        password = request.POST.get('password')
 
     key = 'email__iexact' if '@' in username_or_email else 'username__iexact'
     if User.objects.filter(**{key: username_or_email}).exists():
@@ -41,12 +81,14 @@ def signin(request):
 
     return JsonResponse({"success": True, "id": user.id})
 
+@csrf_exempt
 def profile(request):
     if request.user.is_authenticated():
         return user(request, request.user.id)
     else:
         return user(request, 0)
 
+@csrf_exempt
 def user(request, user_id):
     user_json = {}
     if int(user_id) == 0:
@@ -59,6 +101,7 @@ def user(request, user_id):
 
     return JsonResponse(user_json)
 
+@csrf_exempt
 def problems(request):
     problems = Problem.objects.all()
     problems_json = {}
@@ -73,8 +116,9 @@ def problems(request):
 
     return JsonResponse(problems_json)
 
-def problems_with_user(request):
-    problems = Problem.objects.filter(user=request.user)
+@csrf_exempt
+def problems_with_user(request, user_id):
+    problems = Problem.objects.filter(user__id=user_id)
     problems_json = {}
     for problem in problems:
         problem_json = {}
@@ -87,6 +131,7 @@ def problems_with_user(request):
 
     return JsonResponse(problems_json)
 
+@csrf_exempt
 def problem(request, problem_id):
     problem_json = {}
     problem = Problem.objects.get(id=problem_id)
@@ -98,6 +143,7 @@ def problem(request, problem_id):
 
     return JsonResponse(problem_json)
 
+@csrf_exempt
 def comments_with_problem(request, problem_id):
     comments_json = {}
     comments = Comment.objects.filter(problem__id=problem_id)
