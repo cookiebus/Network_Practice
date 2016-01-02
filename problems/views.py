@@ -11,8 +11,6 @@ def create(request):
         return render(request, "problems/post_problem.html", locals())
 
     problem_form = ProblemForm(request.POST)
-    print problem_form.is_valid()
-    print request.POST
     if problem_form.is_valid():
         problem = problem_form.save(commit=False)
         tags = request.POST.get('tags', [])

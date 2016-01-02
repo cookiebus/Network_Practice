@@ -10,7 +10,7 @@ class Problem(models.Model):
     problem_image = models.ImageField(blank=True, upload_to='static/images/problems')
     description = models.TextField(blank=True)
     up = models.IntegerField(default=0)
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank=True)
 
     class Meta:
         ordering = ('id', )
