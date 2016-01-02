@@ -8,6 +8,42 @@ import json
 def JsonResponse(params):
     return HttpResponse(json.dumps(params))
 
+def signin(request):
+    next = request.GET.get('next', '')
+
+    if request.method != 'POST':
+        return JsonResponse({"success": False, "error": "Please send a post."})
+
+    if 'username_or_email'  not in request.GET:
+        return JsonResponse({"success": False, "error": "Please fill username or email."})
+    else:
+        username_or_email = request.GET.get('username_or_email')
+
+    if 'password'  not in request.GET:
+        return JsonResponse({"success": False, "error": "Please fill password."})
+    else:
+        password = request.GET.get('password')
+
+    key = 'email__iexact' if '@' in username_or_email else 'username__iexact'
+    if User.objects.filter(**{key: username_or_email}).exists():
+        user = User.objects.get(**{key: username_or_email})
+        user = authenticate(username=user.username, password=password)
+        if user is None:
+            return JsonResponse({"success": False, "error": "User do not exists."})
+    else:
+        return JsonResponse({"success": False, "error": "User do not exists."})
+
+    django_login(request, user)
+    if 'remember' not in request.POST:
+        request.session.set_expiry(0)
+    else:
+        request.session.set_expiry(60 * 60 * 24 * 60)
+
+    next = request.GET.get('next', '')
+    if next == '':
+        next = '/'
+    return HttpResponseRedirect(next)
+
 def profile(request):
     if request.user.is_authenticated():
         return user(request, request.user.id)
