@@ -27,17 +27,23 @@
         
         <div id="user-tools">
             Welcome,
-            <strong>{{request.user.username}</strong>.
+            <strong>{{request.user.username}}</strong>.
         </div>
     </div>
     <div id="content" class="colM">
         <h1>Post a problem </h1>
         <div id="content-main">
-<form enctype="multipart/form-data" action="" method="post" id="problem_form">
+<form enctype="multipart/form-data" action="/api/post_problem/" method="post" id="problem_form">
     {% csrf_token %}
 <div>
   <fieldset class="module aligned ">
-
+        <div class="form-row field-title">
+                <div>
+                        <label class="required" for="id_title">User:</label>
+                            <input class="vTextField" id="id_user" maxlength="255" name="user_id" />
+                </div>
+            
+        </div>
         <div class="form-row field-title">
                 <div>
                         <label class="required" for="id_title">Title:</label>
