@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
+from django.contrib.auth import login as django_login, authenticate
 from problems.models import Problem
 from comments.models import Comment
 from tags.models import Tag
@@ -11,6 +12,19 @@ import json, os, random
 def JsonResponse(params):
     return HttpResponse(json.dumps(params))
 
+@csrf_exempt
+def post_tag(request):
+    if request.method != "POST":
+        return JsonResponse({"success": False, "error": "Please send a post."})
+    
+    if 'tag_name' not in request.POST or len(request.POST.get('tag_name'))==0:
+        return JsonResponse({"success": False, "error": "Please fill tag name."})
+    else:
+        tag_name = request.POST.get('tag_name')
+
+    tag = Tag.objects.create(name=tag_name)
+    return JsonResponse({"success": True, "id": tag.id})
+    
 @csrf_exempt
 def post_problem(request):
     if request.method != "POST":
