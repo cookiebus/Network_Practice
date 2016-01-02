@@ -1,0 +1,25 @@
+Username: {{request.user.username}} <br/>
+Email   : {{request.user.email}}
+<ol>
+{% for tag in tags %}
+    <li><a href="/tags/{{tag.id}}">{{ tag.name }}</a></li>
+{% endfor %}
+</ol>
+
+
+<a href="/problems/post/">Post a problem</a>
+<ul>
+{% for problem in problems %}
+    <li>
+        Title: {{ problem.title }} <br/>
+        User: {{problem.user.username}}, {{ problem.user.email}} <br/>
+        <img style="width:600px;height:400" src="/{{problem.problem_image}}" > <br/>
+        Description: {{ problem.description }} <br/>
+        Up: {{ problem.up }} <br/>
+        {% for tag in problem.tags.all %}
+        <button><a href="/tags/{{tag.id}}">{{ tag }}</a></button>
+        {% endfor %}
+    </li>
+    <hr>
+{% endfor %}
+</ul>

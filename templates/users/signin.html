@@ -1,0 +1,22 @@
+      <form role="form" method="post" action="" class="panel-body">
+        {% csrf_token %}
+        <div class="form-group">
+           <input name="username_or_email" type="text" placeholder="Username or e-mail" class="form-control"
+           {% if signin_form.username_or_email.value != None %}value="{{signin_form.username_or_email.value}}"{% endif %}>
+           {% if login_errors %}<ul class=\"errorlist\"><li>The login and/or password you specified are not correct.</li></ul>{% endif %}
+         </div>
+         <div class="form-group">
+           <input name="password" type="password" id="inputPassword" placeholder="Password" class="form-control"
+           {% if signin_form.password.value != None %}value="{{signin_form.password.value}}"{% endif %}>
+         </div>
+         <div class="checkbox">
+           <label>
+             <input type="checkbox" name="remember">Keep me logged in
+           </label>
+         </div>
+         
+         <button type="submit" class="btn btn-success btn-block">Sign In</button>
+         <div class="line line-dashed"></div>
+         <p class="text-muted text-center"><small>Do not have an account ?</small></p>
+         <a href="/accounts/signup/" class="btn btn-info btn-block">Signup for Network Practice</a>
+        </form>
