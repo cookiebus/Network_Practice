@@ -13,6 +13,35 @@ def JsonResponse(params):
     return HttpResponse(json.dumps(params))
 
 @csrf_exempt
+def post_comment(request):
+    if request.method != "POST":
+        return JsonResponse({"success": False, "error": "Please send a post."})
+
+    if 'user_id' not in request.POST or len(request.POST.get('user_id'))==0:
+        return JsonResponse({"success": False, "error": "Please login first."})
+    else:
+        user_id = request.POST.get('user_id')
+        user = User.objects.get(id=user_id)
+
+    if 'reply_user_id' not in request.POST or len(request.POST.get('reply_user_id'))==0:
+        reply_user = None
+    else:
+        user_id = request.POST.get('reply_user_id')
+        reply_user = User.objects.get(id=user_id)
+
+    if 'problem_id' not in request.POST or len(request.POST.get('problem_id'))==0:
+        return JsonResponse({"success": False, "error": "Please comment a problem."})
+    else:
+        problem_id = request.POST.get('problem_id')
+        problem = Problem.objects.get(id=problem_id)
+        
+    comment = Comment.objects.create(user=user, problem=problem)
+    comment.reply_user = reply_user
+    comment.description = request.POST.get('description', '')
+
+    return JsonResponse({"success": True, "id": comment.id})
+
+@csrf_exempt
 def post_tag(request):
     if request.method != "POST":
         return JsonResponse({"success": False, "error": "Please send a post."})
@@ -23,6 +52,8 @@ def post_tag(request):
         tag_name = request.POST.get('tag_name')
 
     tag = Tag.objects.create(name=tag_name)
+    tag.description = request.POST.get('description', '')
+    tag.save()
     return JsonResponse({"success": True, "id": tag.id})
     
 @csrf_exempt
