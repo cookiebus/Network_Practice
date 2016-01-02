@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from problems.models import Problem
 from comments.models import Comment
 from django.views.decorators.csrf import csrf_exempt
-import json
+from django.conf import settings
+import json, os, random
 
 @csrf_exempt
 def JsonResponse(params):
@@ -11,7 +12,53 @@ def JsonResponse(params):
 
 @csrf_exempt
 def post_problem(request):
-    return JsonResponse({"success": True, "id": 6})
+    if request.method != "POST":
+        return JsonResponse({"success": False, "error": "Please send a post."})
+
+    if 'user_id' not in request.POST or len(request.POST.get('user_id'))==0:
+        return JsonResponse({"success": False, "error": "Please login first"})
+    else:
+        user_id = request.POST.get('user_id')
+
+    if 'title' not in request.POST or len(request.POST.get('title'))==0:
+        return JsonResponse({"success": False, "error": "Please fill title."})
+    else:
+        title = request.POST.get('title')
+
+    if 'description' not in request.POST or len(request.POST.get('description'))==0:
+        return JsonResponse({"success": False, "error": "Please fill description."})
+    else:
+        description = request.POST.get('description')
+
+    if 'tags' not in request.POST or len(request.POST.get('tags'))==0:
+        tags = []
+    else:
+        tags = json.loads(request.POST.get('tags'))
+
+    if 'problem_image' not in request.FILES:
+        return JsonResponse({"success": False, "error": "Please upload images."})
+    else:
+        file_obj = request.FILES.get('problem_image', None)
+        if file_obj == None:
+            return JsonResponse({"success": False, "error": "Please upload images."})
+     
+        file_name = 'images/temp_file-%d.jpg' % random.randint(0,10000000)
+        file_full_path = os.path.join(settings.MEDIA_ROOT, file_name)
+        dest = open(file_full_path, 'w')
+        dest.write(file_obj.read())
+        dest.close()
+
+    problem = Problem.objects.create(title=title)
+    problem.user = User.objects.get(id=user_id)
+    problem.problem_image = dest
+    problem.description = description
+    for tag in tags:
+        tag = Tag.objects.get(id=tag)
+        problem.tags.add(tag)
+
+    problem.save()
+
+    return JsonResponse({"success": True, "id": problem.id})
 
 @csrf_exempt
 def signup(request):
@@ -54,7 +101,7 @@ def signin(request):
     if request.method != 'POST':
         return JsonResponse({"success": False, "error": "Please send a post."})
 
-    if 'username_or_email'  not in request.POST:
+    if 'username_or_email' not in request.POST:
         return JsonResponse({"success": False, "error": "Please fill username or email."})
     else:
         username_or_email = request.POST.get('username_or_email')
