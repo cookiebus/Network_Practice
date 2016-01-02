@@ -9,9 +9,9 @@ urlpatterns = patterns(
     url(r'^user/(\d+)/$', 'views.user'),
     url(r'^problem/(\d+)/$', 'views.problem'),
     url(r'^comments/(\d+)/$', 'views.comments_with_problem'),
-    url(r'^signin', 'views.signin'),
-    url(r'^signup', 'views.signup'),
-    url(r'^post_problem', 'views.post_problem'),
-    url(r'^post_tag', 'views.post_tag'),
-    url(r'^post_comment', 'views.post_comment')
+    url(r'^signin/$', 'views.signin'),
+    url(r'^signup/$', 'views.signup'),
+    url(r'^post_problem/$', 'views.post_problem'),
+    url(r'^post_tag/$', 'views.post_tag'),
+    url(r'^post_comment/$', 'views.post_comment')
 )
