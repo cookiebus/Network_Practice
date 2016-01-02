@@ -1,3 +1,23 @@
 .vagrant
+*.zip
 *.pyc
+*.DS_Store
+*.swp
+local_settings.py
+env
 .venv
+gunicorn.sh
+### PyCharm ###
+*.iml
+.idea/
+### Django ###
+*.pyc
+local_settings.py
+*.so
+*.mo
+media/
+*.pid
+celerybeat-schedule
+node_modules
+static/build
+*~
