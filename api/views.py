@@ -99,7 +99,7 @@ def signup(request):
     	return JsonResponse({"success": False, "error": "This username exists."})
     
     if User.objects.filter(email=email).exists():
-        return JsonResponse({"success": False, "error": "This username exists."})
+        return JsonResponse({"success": False, "error": "This email exists."})
     
     user = User.objects.create(username=username, email=email)    
     user.set_password(password)
@@ -131,7 +131,7 @@ def signin(request):
         user = User.objects.get(**{key: username_or_email})
         user = authenticate(username=user.username, password=password)
         if user is None:
-            return JsonResponse({"success": False, "error": "User do not exists."})
+            return JsonResponse({"success": False, "error": "Password incorrect."})
     else:
         return JsonResponse({"success": False, "error": "User do not exists."})
 

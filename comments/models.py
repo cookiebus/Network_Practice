@@ -1,3 +1,4 @@
+# coding: utf-8
 from django.db import models
 from users.models import User
 from problems.models import Problem
@@ -14,4 +15,4 @@ class Comment(models.Model):
         ordering = ('id', )
 
     def __str__(self):
-        return "(%s),%s" % (self.id, self.description)
+        return "(%s)" % self.id
