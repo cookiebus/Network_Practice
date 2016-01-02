@@ -13,7 +13,7 @@ Email   : {{request.user.email}}
     <li>
         Title: {{ problem.title }} <br/>
         User: {{problem.user.username}}, {{ problem.user.email}} <br/>
-        <img style="width:600px;height:400" src="/{{problem.problem_image}}" > <br/>
+        <img style="width:600px;height:400" src="media/{{problem.problem_image}}" > <br/>
         Description: {{ problem.description }} <br/>
         Up: {{ problem.up }} <br/>
         {% for tag in problem.tags.all %}

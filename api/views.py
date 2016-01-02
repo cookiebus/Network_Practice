@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from problems.models import Problem
 from comments.models import Comment
+from tags.models import Tag
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 import json, os, random
@@ -34,6 +35,7 @@ def post_problem(request):
         tags = []
     else:
         tags = json.loads(request.POST.get('tags'))
+        tags = [tags]
 
     if 'problem_image' not in request.FILES:
         return JsonResponse({"success": False, "error": "Please upload images."})
@@ -48,9 +50,8 @@ def post_problem(request):
         dest.write(file_obj.read())
         dest.close()
 
-    problem = Problem.objects.create(title=title)
-    problem.user = User.objects.get(id=user_id)
-    problem.problem_image = dest
+    problem = Problem.objects.create(title=title, user=User.objects.get(id=user_id))
+    problem.problem_image = file_name
     problem.description = description
     for tag in tags:
         tag = Tag.objects.get(id=tag)
