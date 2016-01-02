@@ -73,8 +73,8 @@ def problems(request):
 
     return JsonResponse(problems_json)
 
-def problems_with_user(request):
-    problems = Problem.objects.filter(user=request.user)
+def problems_with_user(request, user_id):
+    problems = Problem.objects.filter(user__id=user_id)
     problems_json = {}
     for problem in problems:
         problem_json = {}
