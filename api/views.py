@@ -21,13 +21,19 @@ def userprofile(request, user_id):
     user_json['username'] = user.username
     user_json['email'] = user.email
     profile = user.profile
-    if profile is None:
+    if profile.birthday is not None:
         user_json['birthday'] = profile.birthday.strftime('%Y-%m-%d')
-        user_json['description'] = profile.description
-        user_json['profile_image'] = profile.profile_image.url
     else:
         user_json['birthday'] = ''
+
+    if profile.description is not None:
+        user_json['description'] = profile.description
+    else:
         user_json['description'] = ''
+
+    try:
+        user_json['profile_image'] = profile.profile_image.url
+    except:
         user_json['profile_image'] = ''
 
     return JsonResponse(user_json)
