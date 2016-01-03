@@ -14,5 +14,6 @@ urlpatterns = patterns(
     url(r'^signup/$', 'views.signup'),
     url(r'^post_problem/$', 'views.post_problem'),
     url(r'^post_tag/$', 'views.post_tag'),
-    url(r'^post_comment/$', 'views.post_comment')
+    url(r'^post_comment/$', 'views.post_comment'),
+    url(r'^post_profile/(\d+)/$', 'views.post_profile')
 )

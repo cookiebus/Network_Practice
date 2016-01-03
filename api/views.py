@@ -8,6 +8,8 @@ from tags.models import Tag
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 import json, os, random
+import datetime
+import time
 
 @csrf_exempt
 def JsonResponse(params):
@@ -17,9 +19,14 @@ def JsonResponse(params):
 def post_profile(request, user_id):
     user = User.objects.get(id=user_id)
     profile = user.profile
+    if 'username' in request.POST:
+        user.username = request.POST.get('username')
+        user.save()
+
     if 'email' in request.POST:
         user.email = request.POST.get('email')
         user.save()
+
     if 'birthday' in request.POST:
         str = request.POST.get('birthday')
         profile.birthday = datetime.datetime.strptime(str,'%Y-%m-%d')
