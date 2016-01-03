@@ -3,6 +3,7 @@ from django.conf.urls import patterns, url
 
 urlpatterns = patterns(
     'api',
+    url(r'^userprofile/(\d+)/$', 'views.userprofile'),
     url(r'^profile/$', 'views.profile'),
     url(r'^problems/$', 'views.problems'),
     url(r'^myproblems/(\d+)/$', 'views.problems_with_user'),

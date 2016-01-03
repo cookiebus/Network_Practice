@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login as django_login, authenticate
 from problems.models import Problem
 from comments.models import Comment
+from django.contrib.auth.models import User
 from tags.models import Tag
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
@@ -12,6 +13,25 @@ import json, os, random
 def JsonResponse(params):
     return HttpResponse(json.dumps(params))
 
+@csrf_exempt
+def userprofile(request, user_id):
+    user = User.objects.get(id=user_id)
+    user_json = {}
+    user_json['id'] = user.id
+    user_json['username'] = user.username
+    user_json['email'] = user.email
+    profile = user.profile
+    if profile is None:
+        user_json['birthday'] = profile.birthday.strftime('%Y-%m-%d')
+        user_json['description'] = profile.description
+        user_json['profile_image'] = profile.profile_image.url
+    else:
+        user_json['birthday'] = ''
+        user_json['description'] = ''
+        user_json['profile_image'] = ''
+
+    return JsonResponse(user_json)
+    
 @csrf_exempt
 def post_comment(request):
     if request.method != "POST":
@@ -205,6 +225,12 @@ def problems(request):
         problem_json['problem_image'] = problem.problem_image.url
         problem_json['description'] = problem.description
         problem_json['up'] = problem.up
+        comments = Comment.objects.filter(problem=problem)
+        comments_json = []
+        for comment in comments:
+            comments_json.append(comment.id)
+        problem_json['comments'] = comments_json
+        problem_json['create_at'] = problem.create_at.strftime('%Y-%m-%d')
         problems_json[problem.id] = problem_json
 
     return JsonResponse(problems_json)
@@ -220,6 +246,12 @@ def problems_with_user(request, user_id):
         problem_json['problem_image'] = problem.problem_image.url
         problem_json['description'] = problem.description
         problem_json['up'] = problem.up
+	comments = Comment.objects.filter(problem=problem)	
+	comments_json = []
+        for comment in comments:
+            comments_json.append(comment.id)
+        problem_json['comments'] = comments_json
+        problem_json['create_at'] = problem.create_at.strftime('%Y-%m-%d')
         problems_json[problem.id] = problem_json
 
     return JsonResponse(problems_json)
@@ -233,6 +265,13 @@ def problem(request, problem_id):
     problem_json['problem_image'] = problem.problem_image.url
     problem_json['description'] = problem.description
     problem_json['up'] = problem.up
+
+    comments = Comment.objects.filter(problem=problem)
+    comments_json = []
+    for comment in comments:
+        comments_json.append(comment.id)
+    problem_json['comments'] = comments_json
+    problem_json['create_at'] = problem.create_at.strftime('%Y-%m-%d')
 
     return JsonResponse(problem_json)
 

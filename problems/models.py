@@ -2,6 +2,8 @@
 from django.db import models
 from tags.models import Tag
 from users.models import User
+from datetime import datetime
+from datetime import timedelta
 
 # Create your models here.
 class Problem(models.Model):
@@ -11,6 +13,8 @@ class Problem(models.Model):
     description = models.TextField(blank=True)
     up = models.IntegerField(default=0)
     tags = models.ManyToManyField(Tag, blank=True)
+    # for admin
+    create_at = models.DateTimeField(default=datetime.now)
 
     class Meta:
         ordering = ('id', )
