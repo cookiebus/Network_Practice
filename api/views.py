@@ -14,6 +14,35 @@ def JsonResponse(params):
     return HttpResponse(json.dumps(params))
 
 @csrf_exempt
+def post_profile(request, user_id):
+    user = User.objects.get(id=user_id)
+    profile = user.profile
+    if 'email' in request.POST:
+        user.email = request.POST.get('email')
+        user.save()
+    if 'birthday' in request.POST:
+        str = request.POST.get('birthday')
+        profile.birthday = datetime.datetime.strptime(str,'%Y-%m-%d')
+
+    if 'description' in request.POST:
+        profile.description = request.POST.get('description')
+
+    if 'profile_image' in request.FILES:
+        file_obj = request.FILES.get('profile_image')
+        if file_obj == None:
+            return JsonResponse({"success": False, "error": "Please upload images."})
+     
+        file_name = 'images/temp_file-%d.jpg' % random.randint(0,100000000)
+        file_full_path = os.path.join(settings.MEDIA_ROOT, file_name)
+        dest = open(file_full_path, 'w')
+        dest.write(file_obj.read())
+        dest.close()
+        profile.profile_image = file_name
+
+    profile.save()
+    return JsonResponse({'success': True, 'id': user.id})
+
+@csrf_exempt
 def userprofile(request, user_id):
     user = User.objects.get(id=user_id)
     user_json = {}
