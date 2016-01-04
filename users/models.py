@@ -8,7 +8,7 @@ class UserProfile(models.Model):
     birthday = models.DateField(u'生日', blank=True, null=True)
     description = models.TextField(blank=True)
     friends  = models.ManyToManyField(User, blank=True)
-    profile_image = models.ImageField(blank=True, upload_to='static/images/users')
+    profile_image = models.ImageField(blank=True, upload_to='images/users')
 
     def __unicode__(self):
         return "{}'s profile".format(self.user.username)

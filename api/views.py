@@ -20,6 +20,7 @@ def post_profile(request, user_id):
     user = User.objects.get(id=user_id)
     profile = user.profile
     if 'username' in request.POST:
+        print request.POST.get('username')
         user.username = request.POST.get('username')
         user.save()
 
@@ -33,16 +34,19 @@ def post_profile(request, user_id):
 
     if 'description' in request.POST:
         profile.description = request.POST.get('description')
-
+ 
+    file_obj = None
     if 'profile_image' in request.FILES:
         file_obj = request.FILES.get('profile_image')
-        if file_obj == None:
-            return JsonResponse({"success": False, "error": "Please upload images."})
-     
+        file_obj = file_obj.read()
+    elif 'profile_image' in request.POST:
+        file_obj = request.POST.get('profile_image')
+    
+    if file_obj is not None:
         file_name = 'images/temp_file-%d.jpg' % random.randint(0,100000000)
         file_full_path = os.path.join(settings.MEDIA_ROOT, file_name)
         dest = open(file_full_path, 'w')
-        dest.write(file_obj.read())
+        dest.write(file_obj)
         dest.close()
         profile.profile_image = file_name
 
