@@ -37,15 +37,27 @@ def post_profile(request, user_id):
  
     file_obj = None
     if 'profile_image' in request.FILES:
+        print "From FILES profile images"
         file_obj = request.FILES.get('profile_image')
         file_obj = file_obj.read()
     elif 'profile_image' in request.POST:
-        file_obj = request.POST.get('profile_image')
-    
+        print "From post"
+        file_obj = request.POST.get('profile_image') #.decode('hex')
+   
+    if file_obj is None:
+        try:
+            print "From FILES 0"
+            print request.FILES
+            file_obj = request.FILES[0]
+            print "SUCCESS From FILES 0"
+            print file_obj
+        except:
+            pass
+ 
     if file_obj is not None:
         file_name = 'images/temp_file-%d.jpg' % random.randint(0,100000000)
         file_full_path = os.path.join(settings.MEDIA_ROOT, file_name)
-        dest = open(file_full_path, 'w')
+        dest = open(file_full_path, 'wb')
         dest.write(file_obj)
         dest.close()
         profile.profile_image = file_name
