@@ -5,7 +5,7 @@ urlpatterns = patterns(
     'api',
     url(r'^userprofile/(\d+)/$', 'views.userprofile'),
     url(r'^profile/$', 'views.profile'),
-    url(r'^problems/$', 'views.problems'),
+    url(r'^problems/(\d+)/$', 'views.problems'),
     url(r'^myproblems/(\d+)/$', 'views.problems_with_user'),
     url(r'^user/(\d+)/$', 'views.user'),
     url(r'^problem/(\d+)/$', 'views.problem'),
@@ -15,5 +15,9 @@ urlpatterns = patterns(
     url(r'^post_problem/$', 'views.post_problem'),
     url(r'^post_tag/$', 'views.post_tag'),
     url(r'^post_comment/$', 'views.post_comment'),
-    url(r'^post_profile/(\d+)/$', 'views.post_profile')
+    url(r'^post_profile/(\d+)/$', 'views.post_profile'),
+    url(r'^favorite/$', 'views.favorite'),
+    url(r'^unfavorite/$', 'views.unfavorite'),
+    url(r'^is_favorite/$', 'views.is_favorite'),
+    url(r'^myfavorite/(\d+)/$', 'views.myfavorite')
 )

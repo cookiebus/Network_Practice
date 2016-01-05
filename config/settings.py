@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'tags',
     'problems',
     'comments',
+    'favorite'
 )
 
 MIDDLEWARE_CLASSES = (

@@ -1,9 +1,10 @@
-from django.shortcuts import render, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, HttpResponse, HttpResponseRedirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import login as django_login, authenticate
 from problems.models import Problem
 from comments.models import Comment
 from django.contrib.auth.models import User
+from favorite.models import Favorite
 from tags.models import Tag
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
@@ -11,9 +12,93 @@ import json, os, random
 import datetime
 import time
 
+def get_problems_json(user, problems):
+    problems_json = {}
+    for problem in problems:
+        problem_json = {}
+        problem_json['title'] = problem.title
+        problem_json['user'] = problem.user.username
+        problem_json['problem_image'] = problem.problem_image.url
+        problem_json['description'] = problem.description
+        problem_json['up'] = problem.up
+        comments = Comment.objects.filter(problem=problem)  
+        comments_json = []
+        for comment in comments:
+            comments_json.append(comment.id)
+        problem_json['comments'] = comments_json
+        if problem.create_at:
+            problem_json['create_at'] = problem.create_at.strftime('%Y-%m-%d')
+        else:
+            problem_json['create_at'] = '1970-1-1'
+        if user is not None and user.favorite_set.filter(problem=problem).exists():
+            problem_json['is_favorite'] = True
+        else:
+            problem_json['is_favorite'] = False
+        problems_json[problem.id] = problem_json
+
+    return problems_json
 @csrf_exempt
 def JsonResponse(params):
     return HttpResponse(json.dumps(params))
+
+@csrf_exempt
+def myfavorite(request, user_id):
+    user = None
+    user = get_object_or_404(User, id=user_id)
+
+    problems_json = {}
+    if user:
+        problems = [favorite.problem for favorite in user.favorite_set.all()]
+        problems_json = get_problems_json(user, problems)
+
+    return JsonResponse(problems_json)
+
+@csrf_exempt
+def is_favorite(request):
+    user, problem = None, None
+    if 'problem_id' in request.GET:
+        problem = get_object_or_404(Problem, id=request.GET.get('problem_id'))
+    if 'user_id' in request.GET:
+        user = get_object_or_404(User, id=request.GET.get('user_id'))
+
+    if user and problem:
+        favorite = user.favorite_set.filter(problem=problem)
+        if favorite.exists():
+            return JsonResponse({"is_favorite": True})
+        else:
+            return JsonResponse({"is_favorite": False})
+
+    return JsonResponse({"is_favorite": False})
+
+@csrf_exempt
+def unfavorite(request):
+    user, problem = None, None
+    if 'problem_id' in request.GET:
+        problem = get_object_or_404(Problem, id=request.GET.get('problem_id'))
+    if 'user_id' in request.GET:
+        user = get_object_or_404(User, id=request.GET.get('user_id'))
+
+    if user and problem:
+        favorite = user.favorite_set.filter(problem=problem)
+        if favorite.exists():
+            favorite.delete()
+        return JsonResponse({"result": "unfavorite success."})
+
+    return JsonResponse({"result": "Not found problem or user."})
+
+@csrf_exempt
+def favorite(request):
+    user, problem = None, None
+    if 'problem_id' in request.GET:
+        problem = get_object_or_404(Problem, id=request.GET.get('problem_id'))
+    if 'user_id' in request.GET:
+        user = get_object_or_404(User, id=request.GET.get('user_id'))
+
+    if user and problem:
+        favorite, create = Favorite.objects.get_or_create(user=user, problem=problem)
+        return JsonResponse({"result": "Like success."})
+
+    return JsonResponse({"result": "Not found problem or user."})
 
 @csrf_exempt
 def post_profile(request, user_id):
@@ -266,7 +351,13 @@ def user(request, user_id):
     return JsonResponse(user_json)
 
 @csrf_exempt
-def problems(request):
+def problems(request, user_id):
+    user = None
+    try:
+        user = User.objects.get(id=user_id)
+    except:
+        user = None
+
     problems = Problem.objects.all()
     problems_json = {}
     for problem in problems:
@@ -281,30 +372,23 @@ def problems(request):
         for comment in comments:
             comments_json.append(comment.id)
         problem_json['comments'] = comments_json
-        problem_json['create_at'] = problem.create_at.strftime('%Y-%m-%d')
+        if problem.create_at:
+            problem_json['create_at'] = problem.create_at.strftime('%Y-%m-%d')
+        else:
+            problem_json['create_at'] = "1970-1-1"
+        if user is not None and user.favorite_set.filter(problem=problem).exists():
+            problem_json['is_favorite'] = True
+        else:
+            problem_json['is_favorite'] = False
         problems_json[problem.id] = problem_json
 
     return JsonResponse(problems_json)
 
 @csrf_exempt
 def problems_with_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
     problems = Problem.objects.filter(user__id=user_id)
-    problems_json = {}
-    for problem in problems:
-        problem_json = {}
-        problem_json['title'] = problem.title
-        problem_json['user'] = problem.user.username
-        problem_json['problem_image'] = problem.problem_image.url
-        problem_json['description'] = problem.description
-        problem_json['up'] = problem.up
-	comments = Comment.objects.filter(problem=problem)	
-	comments_json = []
-        for comment in comments:
-            comments_json.append(comment.id)
-        problem_json['comments'] = comments_json
-        problem_json['create_at'] = problem.create_at.strftime('%Y-%m-%d')
-        problems_json[problem.id] = problem_json
-
+    problems_json = get_problems_json(user, problems)
     return JsonResponse(problems_json)
 
 @csrf_exempt
