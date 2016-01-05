@@ -42,6 +42,13 @@ def JsonResponse(params):
     return HttpResponse(json.dumps(params))
 
 @csrf_exempt
+def up(request, problem_id):
+    problem = get_object_or_404(Problem, id=problem_id)
+    problem.up += 1
+    problem.save()
+    return JsonResponse({"success": True, "id": problem_id})
+
+@csrf_exempt
 def myfavorite(request, user_id):
     user = None
     user = get_object_or_404(User, id=user_id)

@@ -19,5 +19,6 @@ urlpatterns = patterns(
     url(r'^favorite/$', 'views.favorite'),
     url(r'^unfavorite/$', 'views.unfavorite'),
     url(r'^is_favorite/$', 'views.is_favorite'),
-    url(r'^myfavorite/(\d+)/$', 'views.myfavorite')
+    url(r'^myfavorite/(\d+)/$', 'views.myfavorite'),
+    url(r'^post_up/(\d+)/$', 'views.up')
 )
