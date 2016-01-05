@@ -20,7 +20,6 @@ def post_profile(request, user_id):
     user = User.objects.get(id=user_id)
     profile = user.profile
     if 'username' in request.POST:
-        print request.POST.get('username')
         user.username = request.POST.get('username')
         user.save()
 
@@ -37,20 +36,14 @@ def post_profile(request, user_id):
  
     file_obj = None
     if 'profile_image' in request.FILES:
-        print "From FILES profile images"
         file_obj = request.FILES.get('profile_image')
         file_obj = file_obj.read()
     elif 'profile_image' in request.POST:
-        print "From post"
         file_obj = request.POST.get('profile_image') #.decode('hex')
    
     if file_obj is None:
         try:
-            print "From FILES 0"
-            print request.FILES
             file_obj = request.FILES[0]
-            print "SUCCESS From FILES 0"
-            print file_obj
         except:
             pass
  
