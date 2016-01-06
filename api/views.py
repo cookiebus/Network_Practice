@@ -14,6 +14,7 @@ import datetime
 import time
 
 def get_problems_json(user, problems):
+    problems.reverse()
     problems_json = []
     for problem in problems:
         problem_json = {}
@@ -78,7 +79,6 @@ def problems_around(request):
         if abs(xx - x) < DIS and abs(yy - y) < DIS:
             problem_list.append(problem)
 
-    problem_list.reverse()
     problems_json = get_problems_json(None, problem_list)
     return JsonResponse(problems_json)
 
