@@ -68,11 +68,11 @@ def problems_around(request):
     for problem in problems:
         try:
             xx = problem.x
-        else:
+        except:
             xx = 0
         try:
             yy = problem.y
-        else:
+        except:
             yy = 0
 
         if abs(xx - x) < dis and abs(yy -y) < dis:
