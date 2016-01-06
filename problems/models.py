@@ -16,7 +16,7 @@ class Problem(models.Model):
     x = models.IntegerField(default=0, blank=True)
     y = models.IntegerField(default=0, blank=True)
     # for admin
-    create_at = models.DateTimeField(default=datetime.now)
+    create_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ('id', )
