@@ -410,6 +410,6 @@ def comments_with_problem(request, problem_id):
         comment_json['problem'] = comment.problem.title
         comment_json['description'] = comment.description
 
-        comments_json.append(comment.id) = comment_json
+        comments_json.append(comment_json)
     
     return JsonResponse(comments_json)
