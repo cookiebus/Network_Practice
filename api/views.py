@@ -23,6 +23,16 @@ def get_problems_json(user, problems):
         problem_json['user'] = problem.user.username
         problem_json['problem_image'] = problem.problem_image.url
         problem_json['description'] = problem.description
+        if problem.x:
+            problem_json['X'] = problem.x / 100.0
+        else:
+            problem_json['X'] = 0.0
+
+        if problem.y:
+            problem_json['Y'] = problem.y / 100.0
+        else:
+            problem_json['Y'] = 0.0
+
         problem_json['up'] = problem.up
         comments = Comment.objects.filter(problem=problem)  
         comments_json = []
@@ -37,6 +47,7 @@ def get_problems_json(user, problems):
             problem_json['is_favorite'] = True
         else:
             problem_json['is_favorite'] = False
+
         problems_json.append(problem_json)
 
     return problems_json
