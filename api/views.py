@@ -75,10 +75,10 @@ def problems_around(request):
         else:
             yy = 0
 
-        if abs(xx - x) < DIS and abs(yy -y) < DIS:
+        if abs(xx - x) < DIS and abs(yy - y) < DIS:
             problem_list.append(problem)
 
-    problems_json = get_problems_json(user, problem_list.reverse())
+    problems_json = get_problems_json(user, problem_list)
     return JsonResponse(problems_json)
 
 
