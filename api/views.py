@@ -13,8 +13,6 @@ import json, os, random
 import datetime
 import time
 
-DIS = 10000
-
 def get_problems_json(user, problems):
     problems_json = []
     for problem in problems:
@@ -66,6 +64,7 @@ def problems_around(request):
                 if problem.create_at.replace(tzinfo=None) > last_time.replace(tzinfo=None)]
 
     problem_list = []
+    DIS = 10000
     for problem in problems:
         if problem.x:
             xx = problem.x
