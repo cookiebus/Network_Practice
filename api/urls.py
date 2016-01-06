@@ -21,5 +21,5 @@ urlpatterns = patterns(
     url(r'^is_favorite/$', 'views.is_favorite'),
     url(r'^myfavorite/(\d+)/$', 'views.myfavorite'),
     url(r'^post_up/(\d+)/$', 'views.up'),
-    url(r'^problems_around/(\d+)/$', 'views.problems_around')
+    url(r'^problems_around/$', 'views.problems_around')
 )
