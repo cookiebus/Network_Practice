@@ -278,8 +278,8 @@ def post_problem(request):
     problem = Problem.objects.create(title=title, user=User.objects.get(id=user_id))
     problem.problem_image = file_name
     problem.description = description
-    problem.X = X
-    problem.Y = Y
+    problem.x = X
+    problem.y = Y
     for tag in tags:
         tag = Tag.objects.get(id=tag)
         problem.tags.add(tag)
