@@ -13,8 +13,8 @@ class Problem(models.Model):
     description = models.TextField(blank=True)
     up = models.IntegerField(default=0)
     tags = models.ManyToManyField(Tag, blank=True)
-    X = models.IntegerField(default=0)
-    Y = models.IntegerField(default=0)
+    X = models.IntegerField(default=0, blank=True)
+    Y = models.IntegerField(default=0, blank=True)
     # for admin
     create_at = models.DateTimeField(default=datetime.now)
 
