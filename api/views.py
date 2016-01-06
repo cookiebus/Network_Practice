@@ -44,16 +44,16 @@ def get_problems_json(user, problems):
 
 @csrf_exempt
 def problems_around(request):
-    if 'X' in request.POST:
-        value = request.POST.get('X')
+    if 'X' in request.GET:
+        value = request.GET.get('X')
         if '.' in value:
             value = value[:value.find('.')]
         x = int(value) * 100
     else:
         return JsonResponse({"success": False, "error": 'please fill X field.'})
 
-    if 'Y' in request.POST:
-        value = request.POST.get('Y')
+    if 'Y' in request.GET:
+        value = request.GET.get('Y')
         if '.' in value:
             value = value[:value.find('.')]
         y = int(value) * 100
