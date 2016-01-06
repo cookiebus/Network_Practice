@@ -50,7 +50,7 @@ def problems_around(request):
             value = value[:value.find('.')]
         x = int(value) * 100
     else:
-        JsonResponse({"success": False, "error": 'please fill X field.'})
+        return JsonResponse({"success": False, "error": 'please fill X field.'})
 
     if 'Y' in request.POST:
         value = request.POST.get('Y')
@@ -58,7 +58,7 @@ def problems_around(request):
             value = value[:value.find('.')]
         y = int(value) * 100
     else:
-        JsonResponse({"success": False, "error": 'please fill Y field.'})
+        return JsonResponse({"success": False, "error": 'please fill Y field.'})
 
     last_time = timezone.now() - datetime.timedelta(hours=1)
     problems = Problem.objects.all()
