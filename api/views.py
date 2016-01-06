@@ -78,7 +78,7 @@ def problems_around(request):
         if abs(xx - x) < DIS and abs(yy - y) < DIS:
             problem_list.append(problem)
 
-    problems_json = get_problems_json(user, problem_list)
+    problems_json = get_problems_json(None, problem_list)
     return JsonResponse(problems_json)
 
 
