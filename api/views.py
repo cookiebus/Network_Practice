@@ -8,9 +8,12 @@ from favorite.models import Favorite
 from tags.models import Tag
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+from django.utils import timezone
 import json, os, random
 import datetime
 import time
+
+DIS = 10000
 
 def get_problems_json(user, problems):
     problems_json = []
@@ -38,6 +41,47 @@ def get_problems_json(user, problems):
         problems_json.append(problem_json)
 
     return problems_json
+
+@csrf_exempt
+def problems_around(request):
+    if 'X' in request.POST:
+        value = request.POST.get('X')
+        if '.' in value:
+            value = value[:value.find('.')]
+        x = int(value) * 100
+    else:
+        JsonResponse({"success": False, "error": 'please fill X field.'})
+
+    if 'Y' in request.POST:
+        value = request.POST.get('Y')
+        if '.' in value:
+            value = value[:value.find('.')]
+        y = int(value) * 100
+    else:
+        JsonResponse({"success": False, "error": 'please fill Y field.'})
+
+    last_time = timezone.now() - datetime.timedelta(hours=1)
+    problems = Problem.objects.all()
+    problems = [problem for problem in problems if problem.create_at > last_time]
+
+    problem_list = []
+    for problem in problems:
+        try:
+            xx = problem.x
+        else:
+            xx = 0
+        try:
+            yy = problem.y
+        else:
+            yy = 0
+
+        if abs(xx - x) < dis and abs(yy -y) < dis:
+            problem_list.append(problem)
+
+    problems_json = get_problems_json(user, problem_list.reverse())
+    return JsonResponse(problems_json)
+
+
 @csrf_exempt
 def JsonResponse(params):
     return HttpResponse(json.dumps(params))
