@@ -62,7 +62,8 @@ def problems_around(request):
 
     last_time = timezone.now() - datetime.timedelta(hours=1)
     problems = Problem.objects.all()
-    problems = [problem for problem in problems if problem.create_at > last_time]
+    problems = [problem for problem in problems
+                if problem.create_at.replace(tzinfo=None) > last_time.replace(tzinfo=None)]
 
     problem_list = []
     for problem in problems:
