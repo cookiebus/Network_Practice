@@ -3,7 +3,7 @@ from problems.models import Problem
 
 # Register your models here.
 class ProblemAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'user', 'problem_image', 'description', 'up')
+    list_display = ('id', 'title', 'user', 'problem_image', 'description', 'up', 'X', 'Y')
     ordering = ('-id', )
     filter_horizontal = ('tags', )
 
