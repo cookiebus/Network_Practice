@@ -13,9 +13,10 @@ import datetime
 import time
 
 def get_problems_json(user, problems):
-    problems_json = {}
+    problems_json = []
     for problem in problems:
         problem_json = {}
+        problem_json['id'] = problem.id
         problem_json['title'] = problem.title
         problem_json['user'] = problem.user.username
         problem_json['problem_image'] = problem.problem_image.url
@@ -34,7 +35,7 @@ def get_problems_json(user, problems):
             problem_json['is_favorite'] = True
         else:
             problem_json['is_favorite'] = False
-        problems_json[problem.id] = problem_json
+        problems_json.append(problem_json)
 
     return problems_json
 @csrf_exempt
@@ -366,29 +367,7 @@ def problems(request, user_id):
         user = None
 
     problems = Problem.objects.all()
-    problems_json = {}
-    for problem in problems:
-        problem_json = {}
-        problem_json['title'] = problem.title
-        problem_json['user'] = problem.user.username
-        problem_json['problem_image'] = problem.problem_image.url
-        problem_json['description'] = problem.description
-        problem_json['up'] = problem.up
-        comments = Comment.objects.filter(problem=problem)
-        comments_json = []
-        for comment in comments:
-            comments_json.append(comment.id)
-        problem_json['comments'] = comments_json
-        if problem.create_at:
-            problem_json['create_at'] = problem.create_at.strftime('%Y-%m-%d')
-        else:
-            problem_json['create_at'] = "1970-1-1"
-        if user is not None and user.favorite_set.filter(problem=problem).exists():
-            problem_json['is_favorite'] = True
-        else:
-            problem_json['is_favorite'] = False
-        problems_json[problem.id] = problem_json
-
+    problems_json = get_problems_json(user, problems)
     return JsonResponse(problems_json)
 
 @csrf_exempt
@@ -419,15 +398,18 @@ def problem(request, problem_id):
 
 @csrf_exempt
 def comments_with_problem(request, problem_id):
-    comments_json = {}
+    comments_json = []
     comments = Comment.objects.filter(problem__id=problem_id)
     for comment in comments:
         comment_json = {}
+        comment_json['id'] = comment.id
         comment_json['user'] = comment.user.username
         comment_json['reply_user'] = comment.reply_user.username
+        comment_json['user_id'] = comment.user.id
+        comment_json['reply_user_id'] = comment.reply_user.id
         comment_json['problem'] = comment.problem.title
         comment_json['description'] = comment.description
 
-        comments_json[comment.id] = comment_json
+        comments_json.append(comment.id) = comment_json
     
     return JsonResponse(comments_json)
