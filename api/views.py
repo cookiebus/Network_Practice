@@ -240,6 +240,22 @@ def post_problem(request):
     else:
         description = request.POST.get('description')
 
+    if 'X' in request.POST:
+        value = request.POST.get('X')
+        if '.' in value:
+            value = value[:value.find('.')]
+        X = int(value) * 100
+    else:
+        X = 0
+
+    if 'Y' in request.POST:
+        value = request.POST.get('Y')
+        if '.' in value:
+            value = value[:value.find('.')]
+        Y = int(value) * 100
+    else:
+        Y = 0
+
     if 'tags' not in request.POST or len(request.POST.get('tags'))==0:
         tags = []
     else:
@@ -262,6 +278,8 @@ def post_problem(request):
     problem = Problem.objects.create(title=title, user=User.objects.get(id=user_id))
     problem.problem_image = file_name
     problem.description = description
+    problem.X = X
+    problem.Y = Y
     for tag in tags:
         tag = Tag.objects.get(id=tag)
         problem.tags.add(tag)
