@@ -67,13 +67,13 @@ def problems_around(request):
 
     problem_list = []
     for problem in problems:
-        try:
+        if problem.x:
             xx = problem.x
-        except:
+        else:
             xx = 0
-        try:
+        if problem.y:
             yy = problem.y
-        except:
+        else:
             yy = 0
 
         if abs(xx - x) < dis and abs(yy -y) < dis:
