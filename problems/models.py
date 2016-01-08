@@ -7,7 +7,7 @@ from datetime import timedelta
 
 # Create your models here.
 class Problem(models.Model):
-    title = models.CharField(max_length=255, unique=True)
+    title = models.CharField(max_length=255, blank=True)
     user = models.ForeignKey(User)
     problem_image = models.ImageField(blank=True, upload_to='images/problems')
     description = models.TextField(blank=True)
@@ -15,9 +15,8 @@ class Problem(models.Model):
     tags = models.ManyToManyField(Tag, blank=True)
     x = models.IntegerField(default=0, blank=True)
     y = models.IntegerField(default=0, blank=True)
-    # for admin
     create_at = models.DateTimeField(auto_now_add=True)
-
+    position = models.TextField(blank=True)
     class Meta:
         ordering = ('id', )
 

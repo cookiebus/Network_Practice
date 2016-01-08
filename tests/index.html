@@ -2,19 +2,15 @@
 <html>
 <head>
 <title>Home</title>
-<link href="static/css/bootstrap.css" rel='stylesheet' type='text/css' />
+<link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
 <!-- Custom Theme files -->
-<link href="static/css/style.css" rel="stylesheet" type="text/css" media="all" />
+<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
 <!-- Custom Theme files -->
-<script src="static/js/jquery.min.js"></script>
+<script src="js/jquery.min.js"></script>
 <!-- Custom Theme files -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-
-<style type="text/css">
-	div{word-break:break-all}
-</style>
 </head>
 <body>
 	<!-- header-section-starts -->
@@ -68,14 +64,14 @@
         </div>
 	</div>
     
-	<div class="container" style="word-break:break-all">
+	<div class="container">
 		<div class="content">
 			<div class="col-md-7 content-left">
 				<h5 class="head">最新推送</h5>
 
 				<!--这里填充4个最新问题-->
 				{% for problem in problems %}
-				<div style="width:650px" class="article">	
+				<div class="article">	
 					<h6>
 						{% for tag in problem.tags.all %}
         					<button><a href="/tags/{{tag.id}}">{{ tag }}</a></button>
@@ -92,7 +88,7 @@
 
 
 			<!--这里填充四个热门问题-->
-			<div class="col-md-5 content-right" style="word-break:break-all">
+			<div class="col-md-5 content-right">
 			<div class="content-right-top">
 				<h5 class="head">热门</h5>	
 				{% for problem in problems %}
@@ -116,7 +112,7 @@
 
 					<!--这里填充四个精选问题-->
 					{% for problem in problems %}
-					<div class="editors-pic" style="word-break:break-all">
+					<div class="editors-pic">
 						<div class="e-pic">
 							<a href=href="problems.html?proid={{problem.id}}"><img style="width:160px;height:132px" src="/media/{{problem.problem_image}}" alt="" /></a>
 						</div>

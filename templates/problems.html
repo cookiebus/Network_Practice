@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Home</title>
+<title>Single</title>
 <link href="static/css/bootstrap.css" rel='stylesheet' type='text/css' />
 <!-- Custom Theme files -->
 <link href="static/css/style.css" rel="stylesheet" type="text/css" media="all" />
@@ -10,11 +10,9 @@
 <!-- Custom Theme files -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="Konstructs Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, 
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-
-<style type="text/css">
-	div{word-break:break-all}
-</style>
 </head>
 <body>
 	<!-- header-section-starts -->
@@ -25,7 +23,7 @@
 			</div>
 			<div class="pages">
 				<ul>
-					<li><a class="active" href="index.html">主页</a></li>
+					<li><a href="index.html">主页</a></li>
 					<li><a href="collection.html">收藏</a></li>
 					<li><a href="friend.html">好友</a></li>
 				</ul>
@@ -40,59 +38,68 @@
 			<div class="clearfix"></div>
 		</div>
 	</div>
-	<div class="container">
-		<div class="header-bottom">
-            <div class="type">
-				<h5>Article Types</h5>
-			</div>
-			<span class="menu"></span>
-			<div class="list-nav">
-				<ul>
-					{% for tag in tags %}
-    					<li><a href="/tags/{{tag.id}}">{{ tag.name }}</a></li>
-					{% endfor %}
-						<li><a href="Tags.html">More</a></li>                                                                 
-				</ul>
-			</div>
-			<!-- script for menu -->
-				<script>
-				$( "span.menu" ).click(function() {
-				  $( ".list-nav" ).slideToggle( "slow", function() {
-				    // Animation complete.
-				  });
-				});
-			</script>
-			<!-- script for menu -->
-
-			<div class="clearfix"></div>
-        </div>
+	
+	<!--从get字段里proid获得问题-->
+	{%problem = ???%}
 	</div>
-    
 	<div class="container" style="word-break:break-all">
 		<div class="content">
-			<div class="col-md-7 content-left">
-				<h5 class="head">最新推送</h5>
-
-				<!--这里填充4个最新问题-->
-				{% for problem in problems %}
-				<div style="width:650px" class="article">	
-					<h6>
-						{% for tag in problem.tags.all %}
-        					<button><a href="/tags/{{tag.id}}">{{ tag }}</a></button>
-        				{% endfor %}
-					</h6>
-					<a class="title" href="problems.html?proid={{problem.id}}">{{ problem.title }}</a>
-					<a href="problems.html?proid={{problem.id}}"><img style="width:600px;height:255px" src="/media/{{problem.problem_image}}" alt="" /></a>
-					<p>{{ problem.description }} </p>
-					
+			<div class="single-page">
+				<div class="print-main">
+					<h3>{{ problem.title }}</h3>
+					<p class="sub_head">Posted by <a href="#">{{problem.user.username}}</a></p>
+					<a href="#"><img src="/media/{{problem.problem_image}}"  style="width:600px;height:405px"class="img-responsive" alt="" /></a>
+					<p class="span">
+					{% for tag in problem.tags.all %}
+        				<button><a href="/tags/{{tag.id}}">{{ tag }}</a></button>
+        			{% endfor %}</p>
+					<p class="ptext">{{ problem.description }}</p>
+					<p class="ptext"Up: {{ problem.up }}</p>
 				</div>
-				{% endfor %}
+				
+			</div>
+			<div class="col-md-7 single-content-left">
+				<div class="single">
+				<div class="leave">
+				<h4>Leave a comment</h4>
+				</div>
+				<form id="commentform">
+					 <p class="comment-form-comment">
+						<label for="comment">Comment</label>
+						<textarea></textarea>
+					 </p>
+					 <div class="clearfix"></div>
+					<p class="form-submit">
+			           <input name="submit" type="submit" id="submit" value="Send">
+					</p>
+					<div class="clearfix"></div>
+				   </form>
+				   	<div class="comments1">
+								<h4>COMMENTS</h4>
+							{% for comment in comments %}
+			  				<div class="comments-main">
+									<div class="col-md-3 cmts-main-left">
+										<img src="images/avatar.jpg" alt="">
+									</div>
+									<div class="col-md-9 cmts-main-right">
+										<h5>{{comment.user.username}}}</h5>
+										<p>{{comment.description}}</p>
+										<div class="cmts">
+											<div class="col-md-6 cmnts-right">
+												<a href="#">Reply</a>
+											</div>
+											<div class="clearfix"></div>
+										</div>
+									</div>
+									<div class="clearfix"></div>
+								</div>
+			  				</div>
+							</div>
 			</div>
 
 
-
+			<div class="col-md-5 content-right content-right-top">
 			<!--这里填充四个热门问题-->
-			<div class="col-md-5 content-right" style="word-break:break-all">
 			<div class="content-right-top">
 				<h5 class="head">热门</h5>	
 				{% for problem in problems %}
@@ -109,14 +116,12 @@
 
 
 
-
-
 				<div class="editors-pic-grids">
-					<h5>精选</h5>
+					<h5 class="head">精选</h5>
 
 					<!--这里填充四个精选问题-->
 					{% for problem in problems %}
-					<div class="editors-pic" style="word-break:break-all">
+					<div class="editors-pic">
 						<div class="e-pic">
 							<a href=href="problems.html?proid={{problem.id}}"><img style="width:160px;height:132px" src="/media/{{problem.problem_image}}" alt="" /></a>
 						</div>
@@ -131,7 +136,9 @@
 				</div>
 			</div>
 			<div class="clearfix"></div>
-			
+			<div class="clearfix"></div>
+		</div>
+	</div>
 		
 	<div class="footer">
 		<div class="footer-top">
@@ -154,6 +161,7 @@
 				<div class="clearfix"></div>
 			</div>
 		</div>
+	</div>
 	</div>
 </body>
 </html>

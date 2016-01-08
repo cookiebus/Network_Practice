@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<head>
+	<title>Create Account</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link href="css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+	<link href="css/templatemo_style.css" rel="stylesheet" type="text/css">	
+	<!-- Custom Theme files -->
+<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+<!-- Custom Theme files -->
+<script src="js/jquery.min.js"></script>
+</head>
+<body class="templatemo-bg-gray">
+	<h1 class="margin-bottom-15">Create Account</h1>
+	<div class="container">
+		{% csrf_token %}
+		<div class="col-md-12">			
+			<form class="form-horizontal templatemo-create-account templatemo-container" role="form" action="#" method="post">
+				<div class="form-inner">
+					 <div class="form-group">
+			          <div class="col-md-12">		          	
+			            <label for="username" class="control-label">Email</label>
+			            <input id="id_email" name="email" type="email" placeholder="Email address" class="form-control"
+              {% if signup_form.email.value != None %}value="{{signup_form.email.value}}"{% else %}value="{{email}}"{% endif %}>		            		            		            
+			          </div>              
+			        </div>			
+			        <div class="form-group">
+			          <div class="col-md-6">		          	
+			            <label for="username" class="control-label">Username</label>
+			            <input id="id_username" name="username" type="text" placeholder="Username" class="form-control"
+              {% if signup_form.username.value != None %}value="{{signup_form.username.value}}"{% endif %}>
+              {% if signup_form.username.errors %}
+                <ul class=\"errorlist\"><li>
+                    User with this Username already exists.
+                </li></ul>
+            {% endif %}		            		            		            
+			          </div>
+			          <div class="col-md-6 templatemo-radio-group">
+			          	<label class="radio-inline">
+		          			<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1"> Male
+		          		</label>
+		          		<label class="radio-inline">
+		          			<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2"> Female
+		          		</label>
+			          </div>             
+			        </div>
+			        <div class="form-group">
+			          <div class="col-md-6">
+			            <label for="password" class="control-label">Password</label>
+			             <input id="id_password" name="password" type="password" placeholder="Password" class="form-control"
+              {% if signup_form.password.value != None %}value="{{signup_form.password.value}}"{% endif %}>
+              {{signup_form.password.errors}}
+			          </div>
+			     
+			        
+			        <div class="form-group">
+			          <div class="col-md-12">
+			            <button type="submit" class="btn btn-info">Create Account</button>
+			            <a href="login.html" class="pull-right">Login</a>
+			          </div>
+			        </div>	
+				</div>				    	
+		      </form>		      
+		</div>
+	</div>>
+</body>
+</html>

@@ -14,15 +14,23 @@ import datetime
 import time
 
 def get_problems_json(user, problems):
-    problems.reverse()
     problems_json = []
+    problems = list(problems)
+    problems.sort(lambda p1, p2: p1.id - p2.id)
+    problems.reverse()
     for problem in problems:
         problem_json = {}
         problem_json['id'] = problem.id
         problem_json['title'] = problem.title
         problem_json['user'] = problem.user.username
-        problem_json['problem_image'] = problem.problem_image.url
+        problem_json['user_id'] = problem.user.id
+        if problem.problem_image:
+            problem_json['problem_image'] = problem.problem_image.url
         problem_json['description'] = problem.description
+        if problem.position:
+            problem_json['position'] = problem.position
+        else:
+            problem_json['position'] = ''
         if problem.x:
             problem_json['X'] = problem.x / 100.0
         else:
@@ -54,6 +62,10 @@ def get_problems_json(user, problems):
 
 @csrf_exempt
 def problems_around(request):
+    if 'user_id' in request.GET:
+        user = User.objects.get(id=request.GET.get('user_id'))
+    else:
+        user = None
     if 'X' in request.GET:
         value = request.GET.get('X')
         if '.' in value:
@@ -90,7 +102,7 @@ def problems_around(request):
         if abs(xx - x) < DIS and abs(yy - y) < DIS:
             problem_list.append(problem)
 
-    problems_json = get_problems_json(None, problem_list)
+    problems_json = get_problems_json(user, problem_list)
     return JsonResponse(problems_json)
 
 
@@ -258,7 +270,7 @@ def post_comment(request):
     comment = Comment.objects.create(user=user, problem=problem)
     comment.reply_user = reply_user
     comment.description = request.POST.get('description', '')
-
+    comment.save()
     return JsonResponse({"success": True, "id": comment.id})
 
 @csrf_exempt
@@ -318,24 +330,24 @@ def post_problem(request):
         tags = json.loads(request.POST.get('tags'))
         tags = [tags]
 
-    if 'problem_image' not in request.FILES:
-        return JsonResponse({"success": False, "error": "Please upload images."})
-    else:
-        file_obj = request.FILES.get('problem_image', None)
-        if file_obj == None:
-            return JsonResponse({"success": False, "error": "Please upload images."})
-     
+    if 'problem_image' in request.FILES:
+        file_obj = request.FILES.get('problem_image')
         file_name = 'images/temp_file-%d.jpg' % random.randint(0,10000000)
         file_full_path = os.path.join(settings.MEDIA_ROOT, file_name)
         dest = open(file_full_path, 'w')
         dest.write(file_obj.read())
         dest.close()
+    else:
+        file_name = None
 
     problem = Problem.objects.create(title=title, user=User.objects.get(id=user_id))
     problem.problem_image = file_name
     problem.description = description
     problem.x = X
     problem.y = Y
+    if 'position' in request.POST:
+        problem.position = request.POST.get('position')
+
     for tag in tags:
         tag = Tag.objects.get(id=tag)
         problem.tags.add(tag)
@@ -439,8 +451,13 @@ def problems(request, user_id):
         user = User.objects.get(id=user_id)
     except:
         user = None
-
-    problems = Problem.objects.all()
+    if 'last_id' in request.GET:
+        problems = Problem.objects.filter(id__lt=request.GET.get('last_id'))
+    else:
+        problems = Problem.objects.all()
+    problems = list(problems)
+    if len(problems) > 10:
+        problems = problems[-10:]
     problems_json = get_problems_json(user, problems)
     return JsonResponse(problems_json)
 
@@ -478,9 +495,11 @@ def comments_with_problem(request, problem_id):
         comment_json = {}
         comment_json['id'] = comment.id
         comment_json['user'] = comment.user.username
-        comment_json['reply_user'] = comment.reply_user.username
+        if comment.reply_user:
+            comment_json['reply_user'] = comment.reply_user.username
         comment_json['user_id'] = comment.user.id
-        comment_json['reply_user_id'] = comment.reply_user.id
+        if comment.reply_user:
+            comment_json['reply_user_id'] = comment.reply_user.id
         comment_json['problem'] = comment.problem.title
         comment_json['description'] = comment.description
 
