@@ -12,15 +12,20 @@ from django.utils import timezone
 import json, os, random
 import datetime
 import time
-from requests import async
+from requests_futures.sessions import FuturesSession
+session = FuturesSession(max_workers=50)
 
 def post_client(problem_id):
     users = User.objects.all()
     data = {'problem_id': problem_id}
     for user in users:
-        if user.ip and len(user.ip) > 0 and user.port:
-            print "send %s %s %s" % (user.ip, user.port, user.username)
-            async.post('http://%s:%s/' % (ip, port), data=data)
+        profile = user.profile
+        if profile.ip and len(profile.ip) > 0 and profile.port:
+            print "send %s %s %s" % (profile.ip, profile.port, user.username)
+            try:
+                session.post('http://%s:%s/' % (profile.ip, profile.port), data=data)
+            except:
+                pass
 
 def get_problems_json(user, problems):
     problems_json = []
