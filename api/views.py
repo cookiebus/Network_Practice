@@ -538,8 +538,43 @@ def comments_with_problem(request, problem_id):
         if comment.reply_user:
             comment_json['reply_user_id'] = comment.reply_user.id
         comment_json['problem'] = comment.problem.title
+        comment_json['problem_id'] = comment.problem.id
         comment_json['description'] = comment.description
 
         comments_json.append(comment_json)
     
+    return JsonResponse(comments_json)
+
+@csrf_exempt
+def new_comments(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    profile = user.profile
+    if profile.last_comment:
+        last_comment = profile.last_comment
+    else:
+        last_comment = 0
+
+    comments_json = []
+    comments = Comment.objects.filter(user=user, id__gt=last_comment)
+    comments = list(comments)
+    if len(comments) > 0:
+        comments.reverse()
+        profile.last_comment = comments[0].id
+        profile.save()
+    
+    for comment in comments:
+        comment_json = {}
+        comment_json['id'] = comment.id
+        comment_json['user'] = comment.user.username
+        if comment.reply_user:
+            comment_json['reply_user'] = comment.reply_user.username
+        comment_json['user_id'] = comment.user.id
+        if comment.reply_user:
+            comment_json['reply_user_id'] = comment.reply_user.id
+        comment_json['problem'] = comment.problem.title
+        comment_json['problem_id'] = comment.problem.id
+        comment_json['description'] = comment.description
+
+        comments_json.append(comment_json)
+
     return JsonResponse(comments_json)
