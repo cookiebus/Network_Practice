@@ -12,13 +12,7 @@ from django.utils import timezone
 import json, os, random
 import datetime
 import time
-
-def post(ip, port, data):
-    url = 'http://%s:%s/' % (ip, port)
-    req = urllib2.Request(url)
-    data = urllib.urlencode(data)
-    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
-    return opener.open(req, data)
+from requests import async
 
 def post_client(problem_id):
     users = User.objects.all()
@@ -26,7 +20,7 @@ def post_client(problem_id):
     for user in users:
         if user.ip and len(user.ip) > 0 and user.port:
             print "send %s %s %s" % (user.ip, user.port, user.username)
-            post.delay(user.ip, user.port, data)
+            async.post('http://%s:%s/' % (ip, port), data=data)
 
 def get_problems_json(user, problems):
     problems_json = []
@@ -369,7 +363,7 @@ def post_problem(request):
 
     problem.save()
 
-    post_client.delay(problem.id)
+    post_client(problem.id)
 
     return JsonResponse({"success": True, "id": problem.id})
 
