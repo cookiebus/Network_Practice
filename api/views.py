@@ -507,12 +507,32 @@ def problems_with_user(request, user_id):
 
 @csrf_exempt
 def problem(request, problem_id):
+    try:
+        user = User.objects.get(id=request.GET.get('user_id'))
+    except:
+        user = None
     problem_json = {}
     problem = Problem.objects.get(id=problem_id)
+    problem_json['id'] = problem.id
     problem_json['title'] = problem.title
     problem_json['user'] = problem.user.username
-    problem_json['problem_image'] = problem.problem_image.url
+    problem_json['user_id'] = problem.user.id
+    if problem.problem_image:
+        problem_json['problem_image'] = problem.problem_image.url
     problem_json['description'] = problem.description
+    if problem.position:
+        problem_json['position'] = problem.position
+    else:
+        problem_json['position'] = ''
+    if problem.x:
+        problem_json['X'] = problem.x / 100.0
+    else:
+        problem_json['X'] = 0.0
+
+    if problem.y:
+        problem_json['Y'] = problem.y / 100.0
+    else:
+        problem_json['Y'] = 0.0
     problem_json['up'] = problem.up
 
     comments = Comment.objects.filter(problem=problem)
@@ -521,7 +541,10 @@ def problem(request, problem_id):
         comments_json.append(comment.id)
     problem_json['comments'] = comments_json
     problem_json['create_at'] = problem.create_at.strftime('%Y-%m-%d')
-
+    if user is not None and user.favorite_set.filter(problem=problem).exists():
+        problem_json['is_favorite'] = True
+    else:
+        problem_json['is_favorite'] = False
     return JsonResponse(problem_json)
 
 @csrf_exempt
@@ -555,7 +578,7 @@ def new_comments(request, user_id):
         last_comment = 0
 
     comments_json = []
-    comments = Comment.objects.filter(user=user, id__gt=last_comment)
+    comments = Comment.objects.filter(reply_user=user, id__gt=last_comment)
     comments = list(comments)
     if len(comments) > 0:
         comments.reverse()
