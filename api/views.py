@@ -15,17 +15,20 @@ import time
 from requests_futures.sessions import FuturesSession
 session = FuturesSession(max_workers=50)
 
-def post_client(problem_id):
+def post_client(request, problem_id):
     users = User.objects.all()
     data = {'problem_id': problem_id}
+    send_url = []
     for user in users:
         profile = user.profile
         if profile.ip and len(profile.ip) > 0 and profile.port:
             print "send %s %s %s" % (profile.ip, profile.port, user.username)
             try:
-                session.post('http://%s:%s/' % (profile.ip, profile.port), data=data)
+                session.get('http://%s:%s/?problem_id=%s' % (profile.ip, profile.port, problem_id))
+                send_url.append('http://%s:%s/' % (profile.ip, profile.port))
             except:
                 pass
+    return JsonResponse(send_url)
 
 def get_problems_json(user, problems):
     problems_json = []
@@ -368,7 +371,7 @@ def post_problem(request):
 
     problem.save()
 
-    post_client(problem.id)
+    post_client(request, problem.id)
 
     return JsonResponse({"success": True, "id": problem.id})
 
@@ -403,8 +406,11 @@ def signup(request):
     user.save()
 
     profile = user.profile
-    profile.ip = request.POST.get('ip', None)
-    profile.port = int(request.POST.get('port', '80'))
+    if request.META.has_key('HTTP_X_FORWARDED_FOR'):
+        profile.ip =  request.META['HTTP_X_FORWARDED_FOR']
+    else:
+        profile.ip = request.META['REMOTE_ADDR']
+    profile.port = int(request.POST.get('port', '2333'))
     profile.save()
 
     user = authenticate(username=username, password=password)
@@ -440,9 +446,13 @@ def signin(request):
     django_login(request, user)
 
     profile = user.profile
-    profile.ip = request.POST.get('ip', None)
-    profile.port = int(request.POST.get('port', '80'))
+    if request.META.has_key('HTTP_X_FORWARDED_FOR'):  
+        profile.ip =  request.META['HTTP_X_FORWARDED_FOR']  
+    else:  
+        profile.ip = request.META['REMOTE_ADDR']
+    profile.port = int(request.POST.get('port', '2333'))
     profile.save()
+    print profile.ip
 
     if 'remember' not in request.POST:
         request.session.set_expiry(0)
