@@ -386,6 +386,11 @@ def signup(request):
     user.set_password(password)
     user.save()
 
+    profile = user.profile
+    profile.ip = request.POST.get('ip', None)
+    profile.port = int(request.POST.get('port', '80'))
+    profile.save()
+
     user = authenticate(username=username, password=password)
     django_login(request, user)
     
@@ -417,6 +422,12 @@ def signin(request):
         return JsonResponse({"success": False, "error": "User do not exists."})
 
     django_login(request, user)
+
+    profile = user.profile
+    profile.ip = request.POST.get('ip', None)
+    profile.port = int(request.POST.get('port', '80'))
+    profile.save()
+
     if 'remember' not in request.POST:
         request.session.set_expiry(0)
     else:

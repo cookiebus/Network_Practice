@@ -9,6 +9,8 @@ class UserProfile(models.Model):
     description = models.TextField(blank=True)
     friends  = models.ManyToManyField(User, blank=True)
     profile_image = models.ImageField(blank=True, upload_to='images/users')
+    ip = models.CharField(max_length=255, blank=True, null=True)
+    port = models.IntegerField(default=80)
 
     def __unicode__(self):
         return "{}'s profile".format(self.user.username)
